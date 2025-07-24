@@ -1,0 +1,103 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="{% static 'pybo/test.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<body>
+    <h1>Bada 어드민 대시보드</h1>
+    <span>사용자 통계 및 활동 현황</span>
+    <div class="container">
+        <div class="card">
+            <span class="title"><i class="fa-solid fa-users"></i> 총 사용자</span>
+            <div class="count">{{ summary.total_users|default:"0" }}</div>
+            <span class="text">오늘 가입: 1명</span> <!-- TODO: '오늘 가입' 데이터는 현재 context에 없습니다. -->
+        </div>
+         <div class="card">
+            <span class="title"><i class="fa-solid fa-user-clock"></i> 월간 활성 사용자</span>
+            <div class="count">{{ summary.mau|default:"0" }}</div>
+            <span class="text">30일 이내 활동</span>
+        </div>
+         <div class="card">
+            <span class="title"><i class="fa-solid fa-pen-to-square"></i> 총 게시글</span>
+            <div class="count">{{ summary.total_posts|default:"0" }}</div>
+            <span class="text">전체 게시글 수</span>
+        </div>
+         <div class="card">
+            <span class="title"><i class="fa-solid fa-heart"></i> 총 좋아요</span>
+            <div class="count">{{ summary.total_likes|default:"0" }}</div>
+            <span class="text">전체 좋아요 수</span>
+        </div>
+        <div class="card">
+            <span class="title"><i class="fa-solid fa-comments"></i> 총 댓글</span>
+            <div class="count">{{ summary.total_comments|default:"0" }}</div>
+            <span class="text">전체 댓글 수</span>
+        </div>
+        <div class="card">
+            <span class="title"><i class="fa-solid fa-bookmark"></i> 총 북마크</span>
+            <div class="count">{{ summary.total_bookmarks|default:"0" }}</div>
+            <span class="text">전체 북마크 수</span>
+        </div>
+        <div class="card">
+            <span class="title"><i class="fa-solid fa-bell"></i> 총 알림</span>
+            <div class="count">{{ summary.total_notifications|default:"0" }}</div>
+            <span class="text">전체 알림 수</span>
+        </div>
+        <div class="chart-card">
+            <h2 class="chart-title">일간 활성 사용자</h2>
+            <canvas id="dailyActiveUserChart"></canvas>
+        </div>
+    </div>
+
+    <!-- 최근 가입자 목록 테이블 추가 -->
+    <div class="container" style="margin-top: 20px;">
+        <div class="table-card">
+            <h2 class="table-title"><i class="fa-solid fa-user-plus"></i> 최근 가입자</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>이름</th>
+                        <th>닉네임</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in recent_users %}
+                    <tr>
+                        <td>{{ user.name }}</td>
+                        <td>{{ user.nickname }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('dailyActiveUserChart');
+
+        new Chart(ctx, {
+            type: 'line', // 차트 종류: 라인 차트
+            data: {
+                labels: {{ chart_labels|safe }}, // x축 레이블 (날짜)
+                datasets: [{
+                    label: '일간 활성 사용자 수', // 데이터셋 라벨
+                    data: {{ chart_data|safe }}, // y축 데이터 (사용자 수)
+                    fill: true, // 라인 아래 영역 채우기
+                    backgroundColor: 'rgba(59, 130, 246, 0.2)', // 영역 색상
+                    borderColor: 'rgba(59, 130, 246, 1)', // 라인 색상
+                    tension: 0.2 // 라인의 부드러움 정도
+                }]
+            },
+            options: {
+                responsive: true, // 반응형으로 크기 조절
+            }
+        });
+    </script>
+</body>
+</html>

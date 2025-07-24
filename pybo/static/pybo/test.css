@@ -1,0 +1,83 @@
+body{
+    background-color: #F5F6FA;
+}
+.container{
+    display: flex; /* 자식 요소(카드)들을 가로로 배치 */
+    flex-wrap: wrap; /* 공간이 부족하면 다음 줄로 넘김 */
+}
+.card{
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    padding: 15px;           /* 안쪽 여백 */
+    margin: 10px;            /* 바깥 여백 */
+    width: 200px;
+    min-height: 100px; /* 내용에 따라 높이가 유연하게 변하도록 min-height 사용 */
+    border-radius: 10px;
+    background-color: white;
+    display: flex; /* 카드 내부 요소 정렬을 위해 flex 사용 */
+    flex-direction: column; /* 내부 요소를 세로로 쌓음 */
+    justify-content: space-between; /* 위, 중간, 아래로 요소를 분산 배치 */
+}
+.count{
+    font-weight: 600;
+    font-size: 2.0rem; /* 폰트 크기를 키워 강조 */
+    color: #111827;
+    text-align: center; /* 숫자 가운데 정렬 */
+    margin: 5px 0;
+}
+.title{
+    color: #374151;
+    font-weight: 500;
+}
+.text{
+    font-size: small;
+    color: #5c5c5e;
+    text-align: right; /* 보조 텍스트 오른쪽 정렬 */
+}
+.chart-card {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    flex: 2 1 500px; /* 너비 비율 2, 축소 가능, 기본 너비 500px */
+    min-width: 400px; /* 차트가 너무 작아지는 것을 방지 */
+}
+.chart-title {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+.table-card {
+    background-color: white;
+    border: 1px solid #E5E7EB;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 10px;
+    padding: 20px;
+    margin: 10px;
+    flex: 1 1 300px; /* 너비 비율 1, 축소 가능, 기본 너비 300px */
+    min-width: 300px;
+}
+
+.table-title {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+.user-table {
+    width: 100%;
+    border-collapse: collapse; /* 테두리 선 합치기 */
+}
+
+.user-table th, .user-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #f0f0f0; /* 행 구분선 */
+}
+
+.user-table thead th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+}
