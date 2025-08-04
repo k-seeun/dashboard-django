@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+{% load static %}
+<head>
+    <meta charset="UTF-8">
+    <title>댓글 작성 테스트</title>
+    <link rel="stylesheet" href="{% static 'pybo/comment.css' %}">
+</head>
+<body>
+    <h2>댓글 작성</h2>
+
+    {% if form.errors %}
+        <div class="error-note">{{ form.errors }}</div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.content }}
+        <button type="submit">제출</button>
+    </form>
+
+    <h3>등록된 댓글</h3>
+<ul>
+    {% for comment in comments %}
+        <li>
+            <span>{{ comment.content }}</span>
+            <small>({{ comment.created_at|date:"Y-m-d H:i" }})</small>
+            <form class="delete-form" action="{% url 'pybo:comment_delete' comment.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="delete-btn" onclick="return confirm('정말로 이 댓글을 삭제하시겠습니까?');">삭제</button>
+            </form>
+        </li>
+    {% empty %}
+        <li>등록된 댓글이 없습니다.</li>
+    {% endfor %}
+</ul>
+
+    <p><a href="{% url 'pybo:dashboard' %}">← 대시보드로 돌아가기</a></p>
+</body>
+
+</html>

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 
-    <link rel="stylesheet" href="{% static 'pybo/test.css' %}">
+    <link rel="stylesheet" href="{% static 'pybo/test.css' %}?v=1.0">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
@@ -16,41 +16,26 @@
     <div class="container">
         <div class="card">
             <span class="title"><i class="fa-solid fa-users"></i> 총 사용자</span>
-            <div class="count">{{ summary.total_users|floatformat:0 }}</div>
-            <span class="text">오늘 가입: 1명</span>
+            <div class="count">{{ recent_users|length }}</div>
+            <span class="text">최근 가입자 수</span>
         </div>
-         <div class="card">
-            <span class="title"><i class="fa-solid fa-user-clock"></i> 월간 활성 사용자</span>
-            <div class="count">{{ summary.mau|floatformat:0 }}</div>
-            <span class="text">30일 이내 활동</span>
-        </div>
-         <div class="card">
+         <a href="{% url 'pybo:post_create' %}" class="card">
             <span class="title"><i class="fa-solid fa-pen-to-square"></i> 총 게시글</span>
             <div class="count">{{ summary.total_posts|floatformat:0 }}</div>
             <span class="text">전체 게시글 수</span>
-        </div>
+        </a>
          <div class="card">
             <span class="title"><i class="fa-solid fa-heart"></i> 총 좋아요</span>
             <div class="count">{{ summary.total_likes|floatformat:0 }}</div>
             <span class="text">전체 좋아요 수</span>
         </div>
-        <div class="card">
-            <span class="title"><i class="fa-solid fa-comments"></i> 총 댓글</span>
-             <div class="count">{{ summary.total_comments|floatformat:0 }}</div>
-            <span class="text">전체 댓글 수</span>
-        </div>
-        <div class="card">
-            <span class="title"><i class="fa-solid fa-bookmark"></i> 총 북마크</span>
-           <div class="count">{{ summary.total_bookmarks|floatformat:0 }}</div>
-            <span class="text">전체 북마크 수</span>
-        </div>
-        <div class="card">
-            <span class="title"><i class="fa-solid fa-bell"></i> 총 알림</span>
-             <div class="count">{{ summary.total_notifications|floatformat:0 }}</div>
-            <span class="text">전체 알림 수</span>
-        </div>
+   <a href="{% url 'pybo:comment_create' %}" class="card">
+        <span class="title"><i class="fa-solid fa-comments"></i> 총 댓글</span>
+        <div class="count">{{ summary.total_comments|floatformat:0 }}</div>
+        <span class="text">전체 댓글 수</span>
+    </a>
         <div class="chart-card">
-            <h2 class="chart-title">일간 활성 사용자</h2>
+            <h2 class="chart-title">일별 게시글 수</h2>
             <canvas id="dailyActiveUserChart"></canvas>
         </div>
         <div class="table-card">
@@ -58,8 +43,8 @@
             <table class="user-table">
                 <thead>
                     <tr>
-                        <th>성</th>
                         <th>이름</th>
+                        <th>닉네임</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -82,7 +67,7 @@
             data: {
                 labels: {{ chart_labels|safe }}, // x축 레이블 (날짜)
                 datasets: [{
-                    label: '일간 활성 사용자 수', // 데이터셋 라벨
+                    label: '일별 게시글 수', // 데이터셋 라벨
                     data: {{ chart_data|safe }}, // y축 데이터 (사용자 수)
                     fill: true, // 라인 아래 영역 채우기
                     backgroundColor: 'rgba(59, 130, 246, 0.2)', // 영역 색상
@@ -92,6 +77,14 @@
             },
             options: {
                 responsive: true, // 반응형으로 크기 조절
+                scales: {
+                    y: {
+                        beginAtZero: true, // Y축이 0부터 시작하도록 설정
+                        ticks: {
+                            stepSize: 1 // Y축 눈금 단위를 1로 고정
+                        }
+                    }
+                }
             }
         });
     </script>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+    {% load static %}
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>게시글 작성 테스트</title>
+    <link rel="stylesheet" href="{% static 'pybo/post.css' %}">
+</head>
+<body>
+    <h2>게시글 작성</h2>
+
+    <form method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <div class="error-note">{{ form.errors }}</div>
+        {% endif %}
+        <div class="form-group">
+            {{ form.title.label_tag }}
+            {{ form.title }}
+        </div>
+        <div class="form-group">
+            {{ form.content.label_tag }}
+            {{ form.content }}
+        </div>
+        <button type="submit">등록하기</button>
+    </form>
+
+    <p><a href="{% url 'pybo:dashboard' %}">← 대시보드로 돌아가기</a></p>
+
+    <hr class="post-divider">
+
+    <h3>등록된 게시글 목록</h3>
+    <ul class="post-list">
+        {% for post in posts %}
+            <li class="post-item">
+                <div class="post-header">
+                    <h4 class="post-title">{{ post.title }}</h4>
+                    <div class="post-actions">
+                        <form class="like-form" action="{% url 'pybo:post_like' post.id %}" method="post" data-post-id="{{ post.id }}">
+                            {% csrf_token %}
+                            <button type="submit" class="like-btn">
+                                좋아요 <span class="like-count">{{ post.like_count }}</span>
+                            </button>
+                        </form>
+                        <form class="delete-form" action="{% url 'pybo:post_delete' post.id %}" method="post">
+                            {% csrf_token %}
+                            <button type="submit" class="delete-btn" onclick="return confirm('정말로 이 게시글을 삭제하시겠습니까?');">삭제</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>{{ post.content|linebreaksbr }}</p>
+                    <small>작성일: {{ post.created_at|date:"Y-m-d H:i" }}</small>
+                </div>
+            </li>
+        {% empty %}
+            <li class="empty-item">등록된 게시글이 없습니다.</li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.post-title').forEach(function(title) {
+                title.addEventListener('click', function() {
+                    const content = this.parentElement.nextElementSibling;
+                    const isVisible = content.style.display === 'block';
+                    content.style.display = isVisible ? 'none' : 'block';
+                    this.classList.toggle('active', !isVisible);
+                });
+            });
+        });
+
+        // 좋아요 버튼 AJAX 처리
+        document.querySelectorAll('.like-form').forEach(function(form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault(); // 폼의 기본 제출 동작(페이지 새로고침)을 막습니다.
+
+                const url = this.action;
+                const csrfToken = this.querySelector('[name=csrfmiddlewaretoken]').value;
+                const likeCountSpan = this.querySelector('.like-count');
+
+                fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': csrfToken,
+                        'Content-Type': 'application/json'
+                    },
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.like_count !== undefined) {
+                        // 성공적으로 응답을 받으면, 좋아요 카운트를 업데이트합니다.
+                        likeCountSpan.textContent = data.like_count;
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    </script>
+</body>
+</html>
